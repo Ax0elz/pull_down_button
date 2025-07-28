@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
@@ -80,7 +82,7 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
   /// [onTap] without popping the menu.
   /// * [PullDownMenuItem.delayedTapHandler], a tap handler that pops the menu,
   ///  waits for an animation to end and calls the [onTap].
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
 
   /// Handler that provides this item's [BuildContext] as well as [onTap] to
   /// resolve how [onTap] callback is used.
@@ -237,7 +239,7 @@ class _HeaderBody extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: (isHovered ? onHoverTextColor : subtitleStyle.color!)
-                    .withOpacity(0.18),
+                    .withValues(alpha: 0.18),
                 shape: BoxShape.circle,
               ),
               child: IconActionBox(

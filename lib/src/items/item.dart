@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
@@ -42,7 +44,7 @@ const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(10);
 /// waits for an animation to end and calls the [onTap].
 typedef PullDownMenuItemTapHandler = void Function(
   BuildContext context,
-  VoidCallback? onTap,
+  FutureOr<void> Function()? onTap,
 );
 
 /// An item in a cupertino style pull-down menu.
@@ -104,7 +106,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// popping the menu.
   /// * [delayedTapHandler], a tap handler that pops the menu, waits for an
   /// animation to end and calls the [onTap].
-  final VoidCallback? onTap;
+  final FutureOr<void> Function()? onTap;
 
   /// Handler that provides this item's [BuildContext] as well as [onTap] to
   /// resolve how [onTap] callback is used.
@@ -176,7 +178,10 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Default tap handler for [PullDownMenuItem].
   ///
   /// The behavior is to pop the menu and then call the [onTap].
-  static void defaultTapHandler(BuildContext context, VoidCallback? onTap) {
+  static void defaultTapHandler(
+    BuildContext context,
+    FutureOr<void> Function()? onTap,
+  ) {
     // If the menu was opened from [PullDownButton] or [showPullDownMenu] - pop
     // route.
     if (ModalRoute.of(context) is PullDownMenuRoute) {
@@ -197,15 +202,17 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// stack changing action.
   static void delayedTapHandler(
     BuildContext context,
-    VoidCallback? onTap,
+    FutureOr<void> Function()? onTap,
   ) {
     // If the menu was opened from [PullDownButton] or [showPullDownMenu] - pop
     // route.
     if (ModalRoute.of(context) is PullDownMenuRoute) {
       Future<void> future() async {
         await Future<void>.delayed(AnimationUtils.kMenuDuration);
-
-        onTap?.call();
+        final callback = onTap;
+        if (callback != null) {
+          await callback();
+        }
       }
 
       Navigator.pop(context, future);
@@ -217,11 +224,15 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// An additional, pre-made tap handler for [PullDownMenuItem].
   ///
   /// The behavior is to call the [onTap] without popping the menu.
-  static void noPopTapHandler(
+  static FutureOr<void> noPopTapHandler(
     BuildContext _,
-    VoidCallback? onTap,
-  ) =>
-      onTap?.call();
+    FutureOr<void> Function()? onTap,
+  ) async {
+    final callback = onTap;
+    if (callback != null) {
+      await callback();
+    }
+  }
 
   /// Asserts that an item with sizes [ElementSize.small] or
   /// [ElementSize.medium] has an [icon] or a [iconWidget].
@@ -344,8 +355,8 @@ class _SmallItem extends StatelessWidget {
     }
 
     if (!enabled) {
-      resolvedColor = resolvedColor.withOpacity(
-        PullDownMenuItemTheme.disabledOpacity(context),
+      resolvedColor = resolvedColor.withValues(
+        alpha: PullDownMenuItemTheme.disabledOpacity(context),
       );
     }
 
@@ -399,9 +410,9 @@ class _MediumItem extends StatelessWidget {
     if (!enabled) {
       final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
 
-      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedColor = resolvedColor.withValues(alpha: disabledOpacity);
       resolvedStyle = resolvedStyle.copyWith(
-        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedStyle.color!.withValues(alpha: disabledOpacity),
       );
     }
 
@@ -487,12 +498,12 @@ class _LargeItem extends StatelessWidget {
     if (!enabled) {
       final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
 
-      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedColor = resolvedColor.withValues(alpha: disabledOpacity);
       resolvedStyle = resolvedStyle.copyWith(
-        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedStyle.color!.withValues(alpha: disabledOpacity),
       );
       resolvedSubtitleStyle = resolvedSubtitleStyle.copyWith(
-        color: resolvedSubtitleStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedSubtitleStyle.color!.withValues(alpha: disabledOpacity),
       );
     }
 

@@ -74,57 +74,57 @@ enum CompareTest {
   Null([]),
   Item([
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Item',
     ),
   ]),
   ItemOverflow([
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: '012345678901234657890123456789012345678901234657890123456789',
     ),
   ]),
   ItemWithIcon([
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       icon: CupertinoIcons.star,
       title: 'ItemWithIcon',
     ),
   ]),
   ItemWithIconOverflow([
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       icon: CupertinoIcons.star,
       title: '012345678901234657890123456789',
     ),
   ]),
   Dividers([
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Item',
     ),
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Item',
     ),
     PullDownMenuDivider.large(),
     PullDownMenuItem(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Item',
     ),
   ]),
   Pickers([
     PullDownMenuItem.selectable(
       selected: true,
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Value1',
     ),
     PullDownMenuItem.selectable(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Value2',
     ),
     PullDownMenuItem.selectable(
-      onTap: _call,
+      onTap: CompareTest._call,
       title: 'Value3',
     ),
   ]),
@@ -144,7 +144,10 @@ enum CompareTest {
 
   const CompareTest(this.entries);
 
-  static void _call() {}
+  static Future<void> _call() async {
+    // Example async operation
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+  }
 
   final List<PullDownMenuEntry> entries;
 }
